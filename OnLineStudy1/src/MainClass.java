@@ -1,0 +1,27 @@
+import java.sql.Connection;
+import java.sql.*;
+
+public class MainClass {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		try
+		{
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			String URL="jdbc:oracle:thin:@211.238.142.181:1521:XE";
+			Connection conn=DriverManager.getConnection(URL,"hr","happy");
+			String sql="SELECT empno, ename, job FROM emp";
+			PreparedStatement ps=conn.prepareStatement(sql);
+			ResultSet rs=ps.executeQuery();
+			while(rs.next())
+			{
+				System.out.println(rs.getInt(1)+" "+rs.getString(2)+" "+rs.getString(3));
+			}
+			rs.close();
+			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+	}
+	
+}
