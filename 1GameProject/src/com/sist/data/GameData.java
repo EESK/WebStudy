@@ -25,10 +25,8 @@ public class GameData {
         
     }
  
-    
     //WebDriver
     private ChromeDriver driver;
-    
     private WebElement webElement;
     
     //Properties
@@ -36,7 +34,7 @@ public class GameData {
     public static final String WEB_DRIVER_PATH = "C:/webDev/webDriver/chromedriver.exe";
     
     //긁어올 페이지 URL
-    private String base_url;
+    //private String base_url;
     
     public GameData() {
         super();
@@ -49,10 +47,7 @@ public class GameData {
          ChromeOptions options = new ChromeOptions();
          options.setCapability("ignoreProtectedModeSettings", true);
          driver = new ChromeDriver(options);
-         base_url = "https://store.steampowered.com/search/?l=koreana&sort_by=Released_DESC&tags=128";
-        
-        
-        
+         //base_url = "https://store.steampowered.com/search/?l=koreana&sort_by=Released_DESC&tags=128";
     }
  
     public void crawl() {
@@ -60,27 +55,33 @@ public class GameData {
         try 
         {
         	
-            driver.get(base_url);
+            driver.get("https://store.steampowered.com/search/?l=koreana&sort_by=Released_DESC&tags=128");
             
             JavascriptExecutor js = (JavascriptExecutor) driver;
             
-//            webElement = driver.findElement(By.className("global_action_link"));
-//            webElement.click();
-//          
-//            webElement = driver.findElement(By.id("input_username"));
-//            webElement.clear();
-//            webElement.sendKeys("");
-//            
-//            webElement = driver.findElement(By.id("input_password"));
-//            webElement.clear();
-//            webElement.sendKeys("");
-//            
-//            Thread.sleep(1000);
-//            
-//            webElement = driver.findElement(By.className("btnv6_blue_hoverfade"));
-//            webElement.click();
-//            
-//            Thread.sleep(1000);
+            webElement = driver.findElement(By.className("global_action_link"));
+            webElement.click();
+          
+            webElement = driver.findElement(By.id("input_username"));
+            webElement.clear();
+            webElement.sendKeys("dltjrwn10125");
+            
+            webElement = driver.findElement(By.id("input_password"));
+            webElement.clear();
+            webElement.sendKeys("Tkddyd1234");
+            Thread.sleep(1000);
+            
+            webElement = driver.findElement(By.className("btnv6_blue_hoverfade"));
+            webElement.click();
+            Thread.sleep(3000);
+            
+            //정렬기준 : 연관성	
+            webElement = driver.findElement(By.id("sort_by_trigger"));
+            webElement.click();
+            Thread.sleep(1000);
+            webElement = driver.findElement(By.id("_ASC"));
+            webElement.click();
+            Thread.sleep(2000);
             
             for(int i=0; i<=1;i++)
             {
@@ -105,8 +106,25 @@ public class GameData {
                 Document doc=Jsoup.connect(klink).get();
                 
                 
-                //카테고리 정보
+                //카테고리 정보 
                 //cetegory
+                /*
+                   	인디 492
+					액션 19
+					어드벤처 21
+					캐주얼 597
+					시뮬레이션 599 
+					전략 9 
+					롤플레잉 122
+					싱글 플레이어 4182
+					무료 113
+					스포츠 701
+					2D 3871
+					분위기 있는 4166 
+					레이싱 699
+					멀티플레이어 3859
+					퍼즐 1664
+                 */
                 
                 try {
 	
@@ -186,25 +204,23 @@ public class GameData {
                 //이 게임에 대한 사용자 평가 606개 중 75% 가 긍정적입니다.
                 // 평가 
                 try {
-                		Elements opinion1 = doc.select("span.mixed:eq(1)");
+                		Elements opinion1 = doc.select("div#review_histogram_rollup_section span.game_review_summary");
+                		
                 		String opinion=opinion1.attr("data-tooltip-html");
-                		String opinion_cnt=opinion.substring(opinion.indexOf("가")+2,opinion.indexOf("개"));
-                		String like_cnt=opinion.substring(opinion.indexOf("중")+2,opinion.lastIndexOf("가")-2);
                 		
-                		int like=(int) (Integer.parseInt(opinion_cnt)*(Double.parseDouble(like_cnt)*0.01));
-                		int hate=Integer.parseInt(opinion_cnt)-like;
+                		//205,921
+                		//String opinion_cnt=opinion.substring(opinion.indexOf("가")+2,opinion.indexOf("개"));
+                		//String like_cnt=opinion.substring(opinion.indexOf("중")+2,opinion.lastIndexOf("가")-2);
                 		
-                		System.out.println("좋아요 : "+like);
-                		System.out.println("싫어요 : "+hate);
+                		//int like=(int) (Integer.parseInt(opinion_cnt)*(Double.parseDouble(like_cnt)*0.01));
+                		//int hate=Integer.parseInt(opinion_cnt)-like;
+                		
+                		//System.out.println("좋아요 : "+like);
+                		//System.out.println("싫어요 : "+hate);
                 		
 				} catch (Exception e) {
 						System.out.println("점수존재하지 않음");
 				}
-                
-                
-                
-                
-                
                 
                 
                 System.out.println("====================================");
