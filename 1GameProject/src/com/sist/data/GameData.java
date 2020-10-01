@@ -52,9 +52,11 @@ public class GameData {
  
     public void crawl() {
     	GameVO vo=new GameVO();
-        try 
-        {
-        	
+        
+    	try 
+        {	
+        	//int[] category = {492,19,21,597,599,9,122,4182,113,701,3871,4166,699,3859,1664};
+        			
             driver.get("https://store.steampowered.com/search/?l=koreana&sort_by=Released_DESC&tags=128");
             
             JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -83,7 +85,7 @@ public class GameData {
             webElement.click();
             Thread.sleep(2000);
             
-            for(int i=0; i<=1;i++)
+            for(int i=0; i<=1; i++)
             {
             js.executeScript("window.scrollTo(0, document.body.scrollHeight);");
             Thread.sleep(500);
@@ -185,18 +187,33 @@ public class GameData {
                 try 
                 {
                 //최소사양
-                Element sys1=doc.selectFirst("div.game_area_sys_req_leftCol ul");
-                System.out.println("<시스템> "+sys1.text());
+                Elements sys1=doc.select("div.game_area_sys_req_leftCol ul li");
+	                String mini =sys1.get(0).text();
+                	for(int i=1; i< sys1.size(); i++)
+	                {
+                		mini = mini+","+sys1.get(i).text();
+	                }
+	                System.out.println("<최소 시스템> : "+mini);
                 
                 //권장사양
-                Element sys2=doc.selectFirst("div.game_area_sys_req_rightCol ul");
-                System.out.println("<시스템> "+sys2.text());
+                Elements sys2=doc.select("div.game_area_sys_req_rightCol ul li");
+	                String recom =sys2.get(0).text();
+	            	for(int i=1; i< sys2.size(); i++)
+	                {
+	            		recom = recom+","+sys2.get(i).text();
+	                }
+	                System.out.println("<권장 시스템> : "+recom);
                 }
                 catch (Exception ex) 
                 {
                 	//최소사양만 기재되어 있을 때
-                	Element sys=doc.selectFirst("div.game_area_sys_req_full ul");
-                	System.out.println("<시스템> "+sys.text());
+                	Elements sys=doc.select("div.game_area_sys_req_full ul li");
+                	String mini =sys.get(0).text();
+                	for(int i=1; i< sys.size(); i++)
+	                {
+                		mini = mini+","+sys.get(i).text();
+	                }
+	                System.out.println("<시스템> : "+mini);
 				}
                 
                 
