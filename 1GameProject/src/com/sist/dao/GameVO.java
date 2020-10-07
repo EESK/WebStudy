@@ -24,18 +24,7 @@ import java.util.Date;
     CONSTRAINT game_no_pk PRIMARY KEY(game_no)
  */
 public class GameVO {
-	public String getRel_day() {
-		return rel_day;
-	}
-	public void setRel_day(String rel_day) {
-		this.rel_day = rel_day;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
+	
 	public int getGame_no() {
 		return game_no;
 	}
@@ -48,11 +37,17 @@ public class GameVO {
 	public void setCategory(int category) {
 		this.category = category;
 	}
-	public String getDbday() {
-		return dbday;
+	public String getName() {
+		return name;
 	}
-	public void setDbday(String dbday) {
-		this.dbday = dbday;
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getRel_day() {
+		return rel_day;
+	}
+	public void setRel_day(String rel_day) {
+		this.rel_day = rel_day;
 	}
 	public String getDeveloper() {
 		return developer;
@@ -124,7 +119,6 @@ public class GameVO {
 	private int category;
 	private String name;
 	private String rel_day;
-    private String dbday;//오라클에서 날짜를 문자열로 받는다 
     private String developer;
     private String content;
     private String spec;

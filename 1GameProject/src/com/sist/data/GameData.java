@@ -56,7 +56,6 @@ public class GameData {
         
     	try 
         {	//카테고리 정보 
-            //cetegory
             /*
                	1 인디 492
 				2 액션 19
@@ -98,15 +97,25 @@ public class GameData {
             Thread.sleep(1000);
             webElement = driver.findElement(By.id("_ASC"));
             webElement.click();
-            Thread.sleep(2000);
+            Thread.sleep(1000);
+            webElement = driver.findElement(By.id("narrow_language"));
+            webElement.click();
+            Thread.sleep(200);
+            webElement = driver.findElementByXPath("//*[@id=\"additional_search_options\"]/div[6]/div[1]/div");
+            webElement.click();
+            Thread.sleep(200);
+            webElement = driver.findElementByXPath("//*[@id=\"narrow_category1\"]/div[2]/span");
+            webElement.click();
+            Thread.sleep(200);
             
-            for(int i=0; i<=0; i++)
+            
+            for(int i=0; i<=100; i++)
             {
             js.executeScript("window.scrollTo(0, document.body.scrollHeight);");
             Thread.sleep(300);
             }
             
-            for(int m=1; m<=100; m++)
+            for(int m=1; m<=2711; m++)
             {
             	WebElement link = driver.findElementByXPath("//*[@id=\"search_resultsRows\"]/a["+m+"]");
             	WebElement price = driver.findElementByXPath("//*[@id=\"search_resultsRows\"]/a["+m+"]/div[2]/div[4]/div[2]");
@@ -121,38 +130,32 @@ public class GameData {
                 System.out.println(klink);
                 //한글페이지에서 정보 가져오기
                 Document doc=Jsoup.connect(klink).get();
-                
-                
-                //카테고리 정보 
-                //cetegory
-                /*
-                   	인디 492
-					액션 19
-					어드벤처 21
-					캐주얼 597
-					시뮬레이션 599 
-					전략 9 
-					롤플레잉 122
-					싱글 플레이어 4182
-					무료 113
-					스포츠 701
-					2D 3871
-					분위기 있는 4166 
-					레이싱 699
-					멀티플레이어 3859
-					퍼즐 1664
-                 */
-                
+
                 try {
+            	//카테고리 정보 
+                /*
+                   	1 인디 492
+    				2 액션 19
+    				3 어드벤처 21
+    				4 캐주얼 597
+    				5 시뮬레이션 599 
+    				6 전략 9 
+    				7 롤플레잉 122
+    				8 싱글 플레이어 4182
+    				9 무료 113
+    				10 스포츠 701
+    				11 멀티플레이어 3859
+                 */
                 vo.setCategory(1);
-	
+                
+                System.out.println("번호: "+m);
                 Element title=doc.selectFirst("div.apphub_AppName");
                 System.out.println("이름 : "+title.text());
                 vo.setName(title.text());
                 
                 Element date=doc.selectFirst("div.date");
                 System.out.println("발매일 : "+date.text());
-                vo.setDbday(date.text());
+                vo.setRel_day(date.text());
                 
                 Element developer=doc.selectFirst("div#developers_list");
                 System.out.println("개발자 : "+developer.text());
@@ -161,7 +164,6 @@ public class GameData {
                 //내용은 태그자체로 긁기?
                 Element comment=doc.selectFirst("div.game_area_description");
                 System.out.println("내용 : "+comment.html());
-                //vo.setContent(comment.html());
                 vo.setContent(comment.html());
                 
                 try 
@@ -172,6 +174,7 @@ public class GameData {
 				} catch (Exception e) 
                 {
 					System.err.println("비디오 : 데이터 없음");
+					vo.setMovie(""); //null
 				}
    	            
              
@@ -246,6 +249,9 @@ public class GameData {
 	                }
 	                System.out.println("<권장 시스템> : "+recom);
 	                vo.setRecom_spec(recom);
+	                
+	                
+	                vo.setSpec(""); //null
                 }
                 catch (Exception ex) 
                 {
@@ -258,6 +264,10 @@ public class GameData {
 	                }
 	                System.out.println("<시스템> : "+mini);
 	                vo.setSpec(mini);
+	                
+	                
+	                vo.setMin_spec(""); //null
+	                vo.setRecom_spec(""); //null
 				}
                 
                 
@@ -286,10 +296,13 @@ public class GameData {
                 		
 				} catch (Exception e) {
 						System.out.println("점수존재하지 않음");
+						vo.setLike_cnt(0);
+						vo.setHate_cnt(0);
 				}
                 
                 
                 System.out.println("====================================");
+                GameDAO.boardInsert(vo);
                 
                 
                 }

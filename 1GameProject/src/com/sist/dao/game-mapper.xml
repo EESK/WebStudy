@@ -2,16 +2,24 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sist.dao.game-mapper">
 
-
-<insert id="boardInsert" parameterType="GameVO">
-   INSERT INTO Game_TB(no,category,name,rel_day,developer,content,spec,min_spec,recom_spec,poster,like_cnt,hate_cnt,price,tag,movie)
+<insert id="gameInsert" parameterType="GameVO">
+   INSERT INTO Game_TB(game_no,category,name,rel_day,developer,content,spec,min_spec,recom_spec,poster,like_cnt,hate_cnt,price,tag,movie)
    VALUES(
-     (SELECT NVL(MAX(no)+1,1) FROM Game_TB),
+     (SELECT NVL(MAX(game_no)+1,1) FROM Game_TB),
+     #{category},
      #{name},
-     ' ',
-     #{subject},
+     #{rel_day},
+     #{developer},
      #{content},
-     #{pwd}
+     #{spec},
+     #{min_spec},
+     #{recom_spec},
+     #{poster},
+     #{like_cnt},
+     #{hate_cnt},
+     #{price},
+     #{tag},
+     #{movie}
    )
   </insert>
 
