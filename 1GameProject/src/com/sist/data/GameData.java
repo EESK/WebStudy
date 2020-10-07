@@ -51,13 +51,28 @@ public class GameData {
     }
  
     public void crawl() {
+    	
     	GameVO vo=new GameVO();
         
     	try 
-        {	
-        	//int[] category = {492,19,21,597,599,9,122,4182,113,701,3871,4166,699,3859,1664};
+        {	//카테고리 정보 
+            //cetegory
+            /*
+               	1 인디 492
+				2 액션 19
+				3 어드벤처 21
+				4 캐주얼 597
+				5 시뮬레이션 599 
+				6 전략 9 
+				7 롤플레잉 122
+				8 싱글 플레이어 4182
+				9 무료 113
+				10 스포츠 701
+				11 멀티플레이어 3859
+             */
         			
-            driver.get("https://store.steampowered.com/search/?l=koreana&sort_by=Released_DESC&tags=128");
+            driver.get("https://store.steampowered.com/search/?l=koreana&sort_by=Released_DESC&tags=492");
+            //System.out.println("카테고리 : 1 인디");
             
             JavascriptExecutor js = (JavascriptExecutor) driver;
             
@@ -85,13 +100,13 @@ public class GameData {
             webElement.click();
             Thread.sleep(2000);
             
-            for(int i=0; i<=1; i++)
+            for(int i=0; i<=0; i++)
             {
             js.executeScript("window.scrollTo(0, document.body.scrollHeight);");
-            Thread.sleep(500);
+            Thread.sleep(300);
             }
             
-            for(int m=1; m<=30; m++)
+            for(int m=1; m<=100; m++)
             {
             	WebElement link = driver.findElementByXPath("//*[@id=\"search_resultsRows\"]/a["+m+"]");
             	WebElement price = driver.findElementByXPath("//*[@id=\"search_resultsRows\"]/a["+m+"]/div[2]/div[4]/div[2]");
@@ -129,32 +144,35 @@ public class GameData {
                  */
                 
                 try {
+                vo.setCategory(1);
 	
                 Element title=doc.selectFirst("div.apphub_AppName");
                 System.out.println("이름 : "+title.text());
+                vo.setName(title.text());
                 
                 Element date=doc.selectFirst("div.date");
                 System.out.println("발매일 : "+date.text());
+                vo.setDbday(date.text());
                 
-                Element summary=doc.selectFirst("div#developers_list");
-                System.out.println("개발자 : "+summary.text());
+                Element developer=doc.selectFirst("div#developers_list");
+                System.out.println("개발자 : "+developer.text());
+                vo.setDeveloper(developer.text());
                 
+                //내용은 태그자체로 긁기?
                 Element comment=doc.selectFirst("div.game_area_description");
-                System.out.println("내용 : "+comment.text());
+                System.out.println("내용 : "+comment.html());
+                //vo.setContent(comment.html());
+                vo.setContent(comment.html());
                 
                 try 
                 {
                 	Element movie=doc.selectFirst("div.highlight_movie");
                 	System.out.println("비디오 : "+movie.attr("data-mp4-hd-source"));
+                	vo.setMovie(movie.attr("data-mp4-hd-source"));
 				} catch (Exception e) 
                 {
-					System.out.println("비디오 : 데이터 없음");
+					System.err.println("비디오 : 데이터 없음");
 				}
-                //==================================================================
-                //동영상, 없으면 에러
-   	                
-   	            //System.out.println(movie.attr("data-mp4-hd-source"));
-   	            //==================================================================
    	            
              
                 Elements poster=doc.select("div.screenshot_holder a");
@@ -166,10 +184,11 @@ public class GameData {
                 	
               	}
                 System.out.println("포스터 모음 : "+poster2);
+                vo.setPoster(poster2);
                 
                 
-                //태그는 최대 8개 까지만?
-                Elements tags=doc.select("div.glance_tags a:lt(7)");
+                //태그는 최대 10개 까지만?
+                Elements tags=doc.select("div.glance_tags a:lt(9)");
                 String tags2=tags.get(0).text();
                 for(int j=1;j<tags.size();j++)
               	{
@@ -178,10 +197,32 @@ public class GameData {
                 	
               	}
                 System.out.println("태그 모음 : "+tags2);
+                vo.setTag(tags2);
                 
                 
-                //할인 전, 후 가격은 ₩단위로 자르면 될 듯
-                System.out.println("가격 : "+price.getText());
+               
+                
+                try {
+                	 String price1=price.getText();
+                     //System.out.println(price1);
+                     String[] array = price1.split("₩");
+                     //System.out.println(array.length);
+                     if(array.length == 2)
+                     {
+                     	System.out.println("가격 : "+array[1]);
+                     	vo.setPrice(array[1]);
+                     }
+                     else 
+                     {
+                     	System.out.println("가격 : "+array[2]);
+                     	vo.setPrice(array[2]);
+     				 }
+                     
+				} catch (Exception e) {
+					System.out.println("가격 : 무료");
+					vo.setPrice("무료");
+				}
+               
                 
                 //사양
                 try 
@@ -194,6 +235,7 @@ public class GameData {
                 		mini = mini+","+sys1.get(i).text();
 	                }
 	                System.out.println("<최소 시스템> : "+mini);
+	                vo.setMin_spec(mini);
                 
                 //권장사양
                 Elements sys2=doc.select("div.game_area_sys_req_rightCol ul li");
@@ -203,6 +245,7 @@ public class GameData {
 	            		recom = recom+","+sys2.get(i).text();
 	                }
 	                System.out.println("<권장 시스템> : "+recom);
+	                vo.setRecom_spec(recom);
                 }
                 catch (Exception ex) 
                 {
@@ -214,6 +257,7 @@ public class GameData {
                 		mini = mini+","+sys.get(i).text();
 	                }
 	                System.out.println("<시스템> : "+mini);
+	                vo.setSpec(mini);
 				}
                 
                 
@@ -226,14 +270,19 @@ public class GameData {
                 		String opinion=opinion1.attr("data-tooltip-html");
                 		
                 		//205,921
-                		//String opinion_cnt=opinion.substring(opinion.indexOf("가")+2,opinion.indexOf("개"));
-                		//String like_cnt=opinion.substring(opinion.indexOf("중")+2,opinion.lastIndexOf("가")-2);
+                		String opinion_cnt=opinion.substring(opinion.indexOf("가")+2,opinion.indexOf("개"));
+                		opinion_cnt=opinion_cnt.replace(",", "");
+                		String like_cnt=opinion.substring(opinion.indexOf("중")+2,opinion.lastIndexOf("가")-2);
                 		
-                		//int like=(int) (Integer.parseInt(opinion_cnt)*(Double.parseDouble(like_cnt)*0.01));
-                		//int hate=Integer.parseInt(opinion_cnt)-like;
                 		
-                		//System.out.println("좋아요 : "+like);
-                		//System.out.println("싫어요 : "+hate);
+                		int like=(int) (Integer.parseInt(opinion_cnt)*(Double.parseDouble(like_cnt)*0.01));
+                		int hate=Integer.parseInt(opinion_cnt)-like;
+                		
+                		System.out.println("의견 개수 : "+opinion_cnt);
+                		System.out.println("좋아요  : "+like);
+                		vo.setLike_cnt(like);
+                		System.out.println("싫어요 : "+hate);
+                		vo.setHate_cnt(hate);
                 		
 				} catch (Exception e) {
 						System.out.println("점수존재하지 않음");
@@ -241,6 +290,8 @@ public class GameData {
                 
                 
                 System.out.println("====================================");
+                
+                
                 }
                 catch (Exception ex) {
 					System.err.println("★★★★★★★★★★★★★★★★데이터 없음★★★★★★★★★★★★★★★");
@@ -259,9 +310,9 @@ public class GameData {
         } 
         finally 
         {
-            //driver.close();
+            driver.close();
         }
  
-    }
+    }	
  
 }
