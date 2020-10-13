@@ -1,6 +1,11 @@
 package com.sist.data;
 
 import com.sist.dao.*;
+
+import oracle.sql.*;
+
+import java.sql.Date;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -75,6 +80,7 @@ public class GameData {
             
             JavascriptExecutor js = (JavascriptExecutor) driver;
             
+            //로그인
             webElement = driver.findElement(By.className("global_action_link"));
             webElement.click();
           
@@ -85,13 +91,14 @@ public class GameData {
             webElement = driver.findElement(By.id("input_password"));
             webElement.clear();
             webElement.sendKeys("Tkddyd1234");
-            Thread.sleep(1000);
-            
+         
             webElement = driver.findElement(By.className("btnv6_blue_hoverfade"));
             webElement.click();
             Thread.sleep(3000);
+             
             
-            //정렬기준 : 연관성	
+            //정렬기준 : 연관성, 언어로좁히기 : 한글, 선택한 유형 : 게임
+            /*
             webElement = driver.findElement(By.id("sort_by_trigger"));
             webElement.click();
             Thread.sleep(1000);
@@ -107,19 +114,27 @@ public class GameData {
             webElement = driver.findElementByXPath("//*[@id=\"narrow_category1\"]/div[2]/span");
             webElement.click();
             Thread.sleep(200);
+            */
             
             
-            for(int i=0; i<=100; i++)
+            
+            //for(int i=0; i<=100; i++)
             {
-            js.executeScript("window.scrollTo(0, document.body.scrollHeight);");
-            Thread.sleep(300);
+            //js.executeScript("window.scrollTo(0, document.body.scrollHeight);");
+            	
+            //Thread.sleep(200);
             }
             
-            for(int m=1; m<=2711; m++)
+            for(int m=1; m<=500; m++)
             {
             	WebElement link = driver.findElementByXPath("//*[@id=\"search_resultsRows\"]/a["+m+"]");
-            	WebElement price = driver.findElementByXPath("//*[@id=\"search_resultsRows\"]/a["+m+"]/div[2]/div[4]/div[2]");
-
+            	//WebElement price = driver.findElementByXPath("//*[@id=\"search_resultsRows\"]/a["+m+"]/div[2]/div[4]/div[2]");
+            	
+            	
+            	Document doc_p = Jsoup.connect("https://store.steampowered.com/search/?supportedlang=koreana&tags=492&category1=998").get();
+    			Elements price=doc_p.select("div.search_price");
+    			
+            	
                 //디테일 링크가져오기
                 String dLink=link.getAttribute("href");
                 //한글 페이지 가져오는 과정1
@@ -153,18 +168,38 @@ public class GameData {
                 System.out.println("이름 : "+title.text());
                 vo.setName(title.text());
                 
-                Element date=doc.selectFirst("div.date");
-                System.out.println("발매일 : "+date.text());
-                vo.setRel_day(date.text());
                 
+                
+                //발매일
+                Element date1=doc.selectFirst("div.date");
+                String date=date1.text();
+                String year=date.substring(0,date.indexOf("년"));
+                String month=date.substring(date.indexOf("년")+2,date.indexOf("월"));
+                if(month.length()==1)
+                	month=0+month;
+                String day=date.substring(date.indexOf("월")+2,date.indexOf("일"));
+                if(day.length()==1)
+                	day=0+day;
+                date=year+"-"+month+"-"+day;
+                System.out.println("발매일 : "+date);
+                Date d= Date.valueOf(date);
+                vo.setRel_day(d);
+               
+                
+                
+                //개발자
                 Element developer=doc.selectFirst("div#developers_list");
                 System.out.println("개발자 : "+developer.text());
                 vo.setDeveloper(developer.text());
+                
+                
                 
                 //내용은 태그자체로 긁기?
                 Element comment=doc.selectFirst("div.game_area_description");
                 System.out.println("내용 : "+comment.html());
                 vo.setContent(comment.html());
+                
+                
                 
                 try 
                 {
@@ -190,6 +225,7 @@ public class GameData {
                 vo.setPoster(poster2);
                 
                 
+                
                 //태그는 최대 10개 까지만?
                 Elements tags=doc.select("div.glance_tags a:lt(9)");
                 String tags2=tags.get(0).text();
@@ -203,27 +239,34 @@ public class GameData {
                 vo.setTag(tags2);
                 
                 
-               
                 
-                try {
-                	 String price1=price.getText();
-                     //System.out.println(price1);
+                //가격
+                try 
+                {
+                	
+                	 String price1=price.get(m-1).text();
                      String[] array = price1.split("₩");
-                     //System.out.println(array.length);
+                     
                      if(array.length == 2)
                      {
-                     	System.out.println("가격 : "+array[1]);
-                     	vo.setPrice(array[1]);
+                     	 array[1]=array[1].replace(" ", "");
+                     	 array[1]=array[1].replace(",", "");
+                    	 int price2=Integer.parseInt(array[1]);
+                      	 System.out.println("가격 : "+price2);
+                      	 vo.setPrice(price2);
                      }
                      else 
                      {
-                     	System.out.println("가격 : "+array[2]);
-                     	vo.setPrice(array[2]);
+                    	 array[2]=array[1].replace(" ", "");
+                     	 array[2]=array[1].replace(",", "");
+                    	 int price2=Integer.parseInt(array[2].replace(",", ""));
+                       	 System.out.println("가격 : "+price2);
+                      	 vo.setPrice(price2);
      				 }
                      
 				} catch (Exception e) {
 					System.out.println("가격 : 무료");
-					vo.setPrice("무료");
+					vo.setPrice(0);
 				}
                
                 
@@ -249,9 +292,6 @@ public class GameData {
 	                }
 	                System.out.println("<권장 시스템> : "+recom);
 	                vo.setRecom_spec(recom);
-	                
-	                
-	                vo.setSpec(""); //null
                 }
                 catch (Exception ex) 
                 {
@@ -263,11 +303,10 @@ public class GameData {
                 		mini = mini+","+sys.get(i).text();
 	                }
 	                System.out.println("<시스템> : "+mini);
-	                vo.setSpec(mini);
+	                vo.setMin_spec(mini);
 	                
-	                
-	                vo.setMin_spec(""); //null
-	                vo.setRecom_spec(""); //null
+	               
+	                vo.setRecom_spec(""); //권장사양 null
 				}
                 
                 

@@ -1,6 +1,6 @@
 package com.sist.dao;
 
-import java.util.Date;
+import java.sql.Date;
 
 /*
  *  game_no NUMBER,
@@ -25,6 +25,18 @@ import java.util.Date;
  */
 public class GameVO {
 	
+	public int getPrice() {
+		return price;
+	}
+	public void setPrice(int price) {
+		this.price = price;
+	}
+	public int getSell_cnt() {
+		return sell_cnt;
+	}
+	public void setSell_cnt(int sell_cnt) {
+		this.sell_cnt = sell_cnt;
+	}
 	public int getGame_no() {
 		return game_no;
 	}
@@ -43,10 +55,10 @@ public class GameVO {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getRel_day() {
+	public Date getRel_day() {
 		return rel_day;
 	}
-	public void setRel_day(String rel_day) {
+	public void setRel_day(Date rel_day) {
 		this.rel_day = rel_day;
 	}
 	public String getDeveloper() {
@@ -61,12 +73,7 @@ public class GameVO {
 	public void setContent(String content) {
 		this.content = content;
 	}
-	public String getSpec() {
-		return spec;
-	}
-	public void setSpec(String spec) {
-		this.spec = spec;
-	}
+	
 	public String getMin_spec() {
 		return min_spec;
 	}
@@ -97,12 +104,7 @@ public class GameVO {
 	public void setHate_cnt(int hate_cnt) {
 		this.hate_cnt = hate_cnt;
 	}
-	public String getPrice() {
-		return price;
-	}
-	public void setPrice(String price) {
-		this.price = price;
-	}
+
 	public String getTag() {
 		return tag;
 	}
@@ -118,16 +120,16 @@ public class GameVO {
 	private int game_no;
 	private int category;
 	private String name;
-	private String rel_day;
+	private Date rel_day; //디폴트 SYSDATE
     private String developer;
     private String content;
-    private String spec;
     private String min_spec;
     private String recom_spec;
     private String poster;
-    private int like_cnt;
-    private int hate_cnt;
-    private String price;
+    private int like_cnt; //디폴트 0
+    private int hate_cnt; //디폴트 0
+    private int price;	  //디폴트 0, jsp에서 if(pirce=0) 출력="무료"
     private String tag;
     private String movie;
+    private int sell_cnt; //디폴트 0
 }

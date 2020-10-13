@@ -3,7 +3,7 @@
 <mapper namespace="com.sist.dao.game-mapper">
 
 <insert id="gameInsert" parameterType="GameVO">
-   INSERT INTO Game_TB(game_no,category,name,rel_day,developer,content,spec,min_spec,recom_spec,poster,like_cnt,hate_cnt,price,tag,movie)
+   INSERT INTO Game_TB(game_no,category,name,rel_day,developer,content,min_spec,recom_spec,poster,like_cnt,hate_cnt,price,tag,movie)
    VALUES(
      (SELECT NVL(MAX(game_no)+1,1) FROM Game_TB),
      #{category},
@@ -11,7 +11,6 @@
      #{rel_day},
      #{developer},
      #{content},
-     #{spec},
      #{min_spec},
      #{recom_spec},
      #{poster},

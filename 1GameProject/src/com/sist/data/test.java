@@ -13,26 +13,24 @@ public class test {
 	
 	public void test()
 	{
-		
 		try 
 		{
-				Document doc=Jsoup.connect("https://store.steampowered.com/app/648800/_/?l=koreana").get();
-				Element event=doc.selectFirst("div.early_access_announcements");
-                System.out.println("이벤트 : "+event);
-		}
-		catch (Exception e) 
-		{
-			// TODO: handle exception
+			Document doc = Jsoup.connect("https://store.steampowered.com/search/?supportedlang=koreana&tags=492&category1=998").get();
+			Elements price=doc.select("div.search_price");
+			
+			for(int i=1;i<price.size();i++)
+			System.out.println(price.get(i-1).text());
+			
+			
+			
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
-	public String print() throws IOException
-	{
-		Document doc=Jsoup.connect("https://store.steampowered.com/app/648800/_/?l=koreana").get();
-		Element comment=doc.selectFirst("div.game_area_description");
-        //System.out.println("내용 : "+comment.html());
-        return comment.html();
-	}
+
 	
 	public static void main(String[] args) 
 	{
